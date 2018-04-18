@@ -2,6 +2,7 @@ import twython
 from twython import Twython
 import pandas as pd
 import json
+import numpy as np
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -31,22 +32,48 @@ print("[DEBUG] Formatting tweets")
 
 # Create a new DataFrame, initially containing just the IDs
 
-tweet_infos = pd.DataFrame(tweet_ids)
+# tweet_infos = pd.DataFrame(tweet_ids)
 
 # List that will contain the new informations to add to the DataFrame tweet_infos
 
-list = []
+tweet_infos = {}
+list_infos = []
+
+# Test for a single tweet: WORKS
+
+'''
+tweet = twitter.show_status(id=tweet_ids[0])
+print(type(tweet))
+print("id_str: ", tweet['id_str'])
+print("user: ", tweet['user'])
+print("followers: ", tweet['user']['followers_count'])
+tweet_infos["ID"] = tweet['id']
+tweet_infos["Followers"] = tweet['user']['followers_count']
+print(tweet_infos)
+'''
 
 # Access to the informations of each tweet, retrieving them through Tweet ID
-# PROBLEM: Twitter allows standard user only a limited number of requests in a 15 minutes time window.
+# Problem 1: At the end, in list_infos:
+#  - ID will always be the same
+#  - Followers will always be none
+# Problem 2: Twitter allows standard user only a limited number of requests in a 15 minutes time window.
 
-for id in tweet_ids:
+# TO BE FIXED
+
+for i, id in enumerate(tweet_ids):
     try:
         tweet = twitter.show_status(id=id)
+        tweet_infos["ID"] = id
+        tweet_infos["Followers"] = tweet['user']['followers_count']
+        list_infos.append(tweet_infos)
+        print("[DEBUG] Found info for tweet: ", id, ". Added to list")
     except twython.exceptions.TwythonError as e:
         print(e)    # If an exception occurs (APIs return an unexpected HTTP response code) we print it
+        tweet_infos["ID"] = id
+        tweet_infos["Followers"] = None
+        list_infos.append(tweet_infos)
         pass        # Exception is not handled yet
-    else:
-        list.append(tweet['id_str'])
 
-print(list)
+
+# df.to_csv(r'c:\data\pandas.txt', header=None, index=None, sep=' ', mode='a')
+# print(list_infos)
