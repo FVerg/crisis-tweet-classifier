@@ -4,10 +4,10 @@ import pandas as pd
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
-CONSUMER_KEY = ""
-CONSUMER_SECRET = ""
-OAUTH_TOKEN = ""
-OAUTH_TOKEN_SECRET = ""
+CONSUMER_KEY = ""  # Type your CONSUMER_KEY
+CONSUMER_SECRET = ""  # Type your CONSUMER_SECRET
+OAUTH_TOKEN = ""  # Type your OAUTH_TOKEN
+OAUTH_TOKEN_SECRET = ""  # Type your OAUTH_TOKEN_SECRET
 
 twitter = Twython(CONSUMER_KEY, CONSUMER_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
 
