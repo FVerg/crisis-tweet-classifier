@@ -1,1 +1,4 @@
 keys.json
+*.pyproj
+*.sln
+.vs
