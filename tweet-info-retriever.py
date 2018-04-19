@@ -41,7 +41,7 @@ list_infos = []
 
 # Test for a single tweet: WORKS
 
-'''
+
 tweet = twitter.show_status(id=tweet_ids[0])
 print(type(tweet))
 print("id_str: ", tweet['id_str'])
@@ -50,7 +50,8 @@ print("followers: ", tweet['user']['followers_count'])
 tweet_infos["ID"] = tweet['id']
 tweet_infos["Followers"] = tweet['user']['followers_count']
 print(tweet_infos)
-'''
+list_infos.append(tweet_infos)
+print(list_infos)
 
 # Access to the informations of each tweet, retrieving them through Tweet ID
 # Problem 1: At the end, in list_infos:
@@ -59,8 +60,8 @@ print(tweet_infos)
 # Problem 2: Twitter allows standard user only a limited number of requests in a 15 minutes time window.
 
 # TO BE FIXED
-
-for i, id in enumerate(tweet_ids):
+'''
+for i, id in tweet_ids.iteritems():
     try:
         tweet = twitter.show_status(id=id)
         tweet_infos["ID"] = id
@@ -73,7 +74,7 @@ for i, id in enumerate(tweet_ids):
         tweet_infos["Followers"] = None
         list_infos.append(tweet_infos)
         pass        # Exception is not handled yet
-
+'''
 
 # df.to_csv(r'c:\data\pandas.txt', header=None, index=None, sep=' ', mode='a')
 # print(list_infos)
