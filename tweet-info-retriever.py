@@ -62,11 +62,14 @@ for id in tweet_ids:
     try:
         tweet = twitter.show_status(id=id)
         list_infos.append({"Username": tweet['user']['name'],
-                           "ID": id, "Followers": tweet['user']['followers_count'],
+                           "TweetID": id, "Followers": tweet['user']['followers_count'],
                            "Followed": tweet['user']['friends_count'], "TwitterAge": user_age(tweet['user']['created_at']),
                            "TotalTweets": tweet['user']['statuses_count'], "Verified": tweet['user']['verified'],
-                           "Geotagged": is_geotagged(tweet)})
+                           "Geotagged": is_geotagged(tweet), "nHashtags": len(tweet['entities']['hashtags'])})
         print("[DEBUG] Found info for tweet: ", id, ". Added to list")
+    except twython.exceptions.TwythonRateLimitError as e:
+        print(e)
+        break
     except twython.exceptions.TwythonError as e:
         print(e)    # If an exception occurs (APIs return an unexpected HTTP response code) we print it
         list_infos.append({"Username": None, "ID": id, "Followers": None,
