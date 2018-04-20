@@ -57,7 +57,7 @@ list_infos.append(tweet_infos)
 print(list_infos)
 '''
 # Access to the informations of each tweet, retrieving them through Tweet ID
-
+tweet_counter = 0
 for id in tweet_ids:
     try:
         tweet = twitter.show_status(id=id)
@@ -65,16 +65,19 @@ for id in tweet_ids:
                            "TweetID": id, "Followers": tweet['user']['followers_count'],
                            "Followed": tweet['user']['friends_count'], "TwitterAge": user_age(tweet['user']['created_at']),
                            "TotalTweets": tweet['user']['statuses_count'], "Verified": tweet['user']['verified'],
-                           "Geotagged": is_geotagged(tweet), "nHashtags": len(tweet['entities']['hashtags'])})
+                           "Geotagged": is_geotagged(tweet), "nHashtags": len(tweet['entities']['hashtags']), "nURLs": len(tweet['entities']['urls'])})
+        tweet_counter = tweet_counter + 1
         print("[DEBUG] Found info for tweet: ", id, ". Added to list")
     except twython.exceptions.TwythonRateLimitError as e:
         print(e)
+        print("[DEBUG] Try again in some minutes, reached max number of tweets")
+        print("[DEBUG] ", tweet_counter, " tweets have been correctly extracted")
         break
     except twython.exceptions.TwythonError as e:
         print(e)    # If an exception occurs (APIs return an unexpected HTTP response code) we print it
         list_infos.append({"Username": None, "ID": id, "Followers": None,
                            "Followed": None, "TwitterAge": None, "TotalTweets": None, "Verified": None,
-                           "Geotagged": None})
+                           "Geotagged": None, "nHashtags": None, "nURLs": None})
 
 # df.to_csv(r'c:\data\pandas.txt', header=None, index=None, sep=' ', mode='a')
 print(list_infos)
