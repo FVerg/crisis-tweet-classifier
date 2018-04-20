@@ -4,6 +4,9 @@ import pandas as pd
 import json
 import numpy as np
 
+from user_age import user_age
+from is_geotagged import is_geotagged
+
 pd.options.mode.chained_assignment = None  # default='warn'
 
 keys = json.load(open("keys.json"))
@@ -37,7 +40,6 @@ print("[DEBUG] Formatting tweets")
 
 # List that will contain the new informations to add to the DataFrame tweet_infos
 
-tweet_infos = {}            # Auxiliary dictionary
 list_infos = []             # List that will contain the new informations
 
 # Test for a single tweet: WORKS
@@ -55,26 +57,21 @@ list_infos.append(tweet_infos)
 print(list_infos)
 '''
 # Access to the informations of each tweet, retrieving them through Tweet ID
-# Problem 1: At the end, in list_infos:
-#  - ID will always be the same
-#  - Followers will always be none
-# Problem 2: Twitter allows standard user only a limited number of requests in a 15 minutes time window.
-
-# TO BE FIXED
 
 for id in tweet_ids:
     try:
         tweet = twitter.show_status(id=id)
-        # tweet_infos["ID"] = id
-        # tweet_infos["Followers"] = tweet['user']['followers_count']
         list_infos.append({"Username": tweet['user']['name'],
-                           "ID": id, "Followers": tweet['user']['followers_count'], "Followed": tweet['user']['friends_count']})
+                           "ID": id, "Followers": tweet['user']['followers_count'],
+                           "Followed": tweet['user']['friends_count'], "TwitterAge": user_age(tweet['user']['created_at']),
+                           "TotalTweets": tweet['user']['statuses_count'], "Verified": tweet['user']['verified'],
+                           "Geotagged": is_geotagged(tweet)})
         print("[DEBUG] Found info for tweet: ", id, ". Added to list")
     except twython.exceptions.TwythonError as e:
         print(e)    # If an exception occurs (APIs return an unexpected HTTP response code) we print it
-        # tweet_infos["ID"] = id
-        # tweet_infos["Followers"] = None
-        list_infos.append({"Username": None, "ID": id, "Followers": None, "Followed": None})
+        list_infos.append({"Username": None, "ID": id, "Followers": None,
+                           "Followed": None, "TwitterAge": None, "TotalTweets": None, "Verified": None,
+                           "Geotagged": None})
 
 # df.to_csv(r'c:\data\pandas.txt', header=None, index=None, sep=' ', mode='a')
 print(list_infos)
