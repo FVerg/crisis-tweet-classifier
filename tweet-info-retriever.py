@@ -68,7 +68,6 @@ for id in tweet_ids:
                            "TotalTweets": tweet['user']['statuses_count'], "Verified": tweet['user']['verified'],
                            "Geotagged": is_geotagged(tweet), "nHashtags": len(tweet['entities']['hashtags']), "nURLs": len(tweet['entities']['urls']),
                            "nMentions": len(tweet['entities']['user_mentions'])})
-        print(tweet['entities']['user_mentions'])
         correctly_extracted = correctly_extracted + 1
         print("[DEBUG] Found info for tweet: ", id, ". Added to list.")
     except twython.exceptions.TwythonRateLimitError as e:
@@ -80,9 +79,13 @@ for id in tweet_ids:
     except twython.exceptions.TwythonError as e:
         print(e)    # If an exception occurs (APIs return an unexpected HTTP response code) we print it
         not_available = not_available + 1
+'''
         list_infos.append({"Username": None, "ID": id, "Followers": None,
                            "Followed": None, "TwitterAge": None, "TotalTweets": None, "Verified": None,
                            "Geotagged": None, "nHashtags": None, "nURLs": None, "nMentions": None})
+'''
+meta_tweets = pd.DataFrame(list_infos)
+meta_tweets = meta_tweets.set_index('TweetID')
 
-# df.to_csv(r'c:\data\pandas.txt', header=None, index=None, sep=' ', mode='a')
-print(list_infos)
+col_names = list(meta_tweets.columns.values)
+meta_tweets.to_csv(r'metatweets.csv', header=col_names, index=True, sep=',', mode='a')
