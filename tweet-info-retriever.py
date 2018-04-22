@@ -61,15 +61,20 @@ for id in tweet_ids:
         # If we reach the limit of downloadable tweets in a time window, we wait 5 minutes and try again
         print(e)
         print("[DEBUG] Maximum number of tweets reached. Trying again in 5 mins...")
-        print("[DEBUG] ", correctly_extracted, " tweets have been correctly extracted")
-        print("[DEBUG] ", not_available,
-              " tweets have encountered problems during download (403, 404, ...)")
-        time.sleep(300)
+        print("[DEBUG]", correctly_extracted, "tweets have been correctly extracted")
+        print("[DEBUG]", not_available,
+              "tweets have encountered problems during download (403, 404, ...)")
+        for i in range(300):
+            if i == 299:
+                print("[DEBUG]", 300-i, "second left...", flush=True)
+            else:
+                print("[DEBUG]", 300-i, "seconds left...", flush=True)
+            time.sleep(1)
         # break
     except twython.exceptions.TwythonError as e:
         # If other exceptions occurs (APIs return an unexpected HTTP response code) we print it
         # This box includes error like 404 - Not found, 403 - User suspended etc.
-        print("[DEBUG] ", e)
+        print("[DEBUG]", e)
         not_available = not_available + 1
 '''
         list_infos.append({"Username": None, "ID": id, "Followers": None,
@@ -77,16 +82,15 @@ for id in tweet_ids:
                            "Geotagged": None, "nHashtags": None, "nURLs": None, "nMentions": None})
 '''
 
-print("[DEBUG] ", correctly_extracted, " tweets have been correctly extracted")
-print("[DEBUG] ", not_available,
-      " tweets have encountered problems during download (403, 404, ...)")
+print("[DEBUG]", correctly_extracted, "tweets have been correctly extracted")
+print("[DEBUG]", not_available,
+      "tweets have encountered problems during download (403, 404, ...)")
 
 # Save tweets and their metadata into a new Dataframe
 meta_tweets = pd.DataFrame(list_infos)
 
-# Set the index (Tweet ID) and sort tweets by index
+# Set the index (Tweet ID)
 meta_tweets = meta_tweets.set_index('TweetID')
-meta_tweets = meta_tweets.sort(columns='TweetID', ascending=1)
 
 # Extract the column names from the DataFrame
 col_names = list(meta_tweets.columns.values)
