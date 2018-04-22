@@ -42,20 +42,6 @@ print("[DEBUG] Formatting tweets")
 
 list_infos = []             # List that will contain the new informations
 
-# Test for a single tweet: WORKS
-
-'''
-tweet = twitter.show_status(id=tweet_ids[0])
-print(type(tweet))
-print("id_str: ", tweet['id_str'])
-print("user: ", tweet['user'])
-print("followers: ", tweet['user']['followers_count'])
-tweet_infos["ID"] = tweet['id']
-tweet_infos["Followers"] = tweet['user']['followers_count']
-print(tweet_infos)
-list_infos.append(tweet_infos)
-print(list_infos)
-'''
 # Access to the informations of each tweet, retrieving them through Tweet ID
 correctly_extracted = 0
 not_available = 0
@@ -72,7 +58,7 @@ for id in tweet_ids:
         print("[DEBUG] Found info for tweet: ", id, ". Added to list.")
     except twython.exceptions.TwythonRateLimitError as e:
         print(e)
-        print("[DEBUG] Try again in some minutes, reached max number of tweets")
+        print("DEBUG] Try again in some minutes, reached max number of tweets")
         print("[DEBUG] ", correctly_extracted, " tweets have been correctly extracted")
         print("[DEBUG] ", not_available, " tweets have encountered problems in being downloaded")
         break
