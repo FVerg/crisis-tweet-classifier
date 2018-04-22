@@ -3,6 +3,7 @@ from twython import Twython
 import pandas as pd
 import json
 import numpy as np
+import time
 
 from user_age import user_age
 from is_geotagged import is_geotagged
@@ -57,21 +58,38 @@ for id in tweet_ids:
         correctly_extracted = correctly_extracted + 1
         print("[DEBUG] Found info for tweet: ", id, ". Added to list.")
     except twython.exceptions.TwythonRateLimitError as e:
+        # If we reach the limit of downloadable tweets in a time window, we wait 5 minutes and try again
         print(e)
-        print("DEBUG] Try again in some minutes, reached max number of tweets")
+        print("[DEBUG] Maximum number of tweets reached. Trying again in 5 mins...")
         print("[DEBUG] ", correctly_extracted, " tweets have been correctly extracted")
-        print("[DEBUG] ", not_available, " tweets have encountered problems in being downloaded")
-        break
+        print("[DEBUG] ", not_available,
+              " tweets have encountered problems during download (403, 404, ...)")
+        time.sleep(300)
+        # break
     except twython.exceptions.TwythonError as e:
-        print(e)    # If an exception occurs (APIs return an unexpected HTTP response code) we print it
+        # If other exceptions occurs (APIs return an unexpected HTTP response code) we print it
+        # This box includes error like 404 - Not found, 403 - User suspended etc.
+        print("[DEBUG] ", e)
         not_available = not_available + 1
 '''
         list_infos.append({"Username": None, "ID": id, "Followers": None,
                            "Followed": None, "TwitterAge": None, "TotalTweets": None, "Verified": None,
                            "Geotagged": None, "nHashtags": None, "nURLs": None, "nMentions": None})
 '''
-meta_tweets = pd.DataFrame(list_infos)
-meta_tweets = meta_tweets.set_index('TweetID')
 
+print("[DEBUG] ", correctly_extracted, " tweets have been correctly extracted")
+print("[DEBUG] ", not_available,
+      " tweets have encountered problems during download (403, 404, ...)")
+
+# Save tweets and their metadata into a new Dataframe
+meta_tweets = pd.DataFrame(list_infos)
+
+# Set the index (Tweet ID) and sort tweets by index
+meta_tweets = meta_tweets.set_index('TweetID')
+meta_tweets = meta_tweets.sort(columns='TweetID', ascending=1)
+
+# Extract the column names from the DataFrame
 col_names = list(meta_tweets.columns.values)
-meta_tweets.to_csv(r'metatweets.csv', header=col_names, index=True, sep=',', mode='a')
+
+# Save as CSV, including header containing columns
+meta_tweets.to_csv(r'metatweets.csv', header=col_names, index=True, sep=',', mode='w')
