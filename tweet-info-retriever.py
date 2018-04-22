@@ -57,7 +57,8 @@ list_infos.append(tweet_infos)
 print(list_infos)
 '''
 # Access to the informations of each tweet, retrieving them through Tweet ID
-tweet_counter = 0
+correctly_extracted = 0
+not_available = 0
 for id in tweet_ids:
     try:
         tweet = twitter.show_status(id=id)
@@ -65,19 +66,23 @@ for id in tweet_ids:
                            "TweetID": id, "Followers": tweet['user']['followers_count'],
                            "Followed": tweet['user']['friends_count'], "TwitterAge": user_age(tweet['user']['created_at']),
                            "TotalTweets": tweet['user']['statuses_count'], "Verified": tweet['user']['verified'],
-                           "Geotagged": is_geotagged(tweet), "nHashtags": len(tweet['entities']['hashtags']), "nURLs": len(tweet['entities']['urls'])})
-        tweet_counter = tweet_counter + 1
-        print("[DEBUG] Found info for tweet: ", id, ". Added to list")
+                           "Geotagged": is_geotagged(tweet), "nHashtags": len(tweet['entities']['hashtags']), "nURLs": len(tweet['entities']['urls']),
+                           "nMentions": len(tweet['entities']['user_mentions'])})
+        print(tweet['entities']['user_mentions'])
+        correctly_extracted = correctly_extracted + 1
+        print("[DEBUG] Found info for tweet: ", id, ". Added to list.")
     except twython.exceptions.TwythonRateLimitError as e:
         print(e)
         print("[DEBUG] Try again in some minutes, reached max number of tweets")
-        print("[DEBUG] ", tweet_counter, " tweets have been correctly extracted")
+        print("[DEBUG] ", correctly_extracted, " tweets have been correctly extracted")
+        print("[DEBUG] ", not_available, " tweets have encountered problems in being downloaded")
         break
     except twython.exceptions.TwythonError as e:
         print(e)    # If an exception occurs (APIs return an unexpected HTTP response code) we print it
+        not_available = not_available + 1
         list_infos.append({"Username": None, "ID": id, "Followers": None,
                            "Followed": None, "TwitterAge": None, "TotalTweets": None, "Verified": None,
-                           "Geotagged": None, "nHashtags": None, "nURLs": None})
+                           "Geotagged": None, "nHashtags": None, "nURLs": None, "nMentions": None})
 
 # df.to_csv(r'c:\data\pandas.txt', header=None, index=None, sep=' ', mode='a')
 print(list_infos)
