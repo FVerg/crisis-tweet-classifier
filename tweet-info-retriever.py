@@ -26,6 +26,7 @@ dataset = pd.read_csv('C:/dataset/2013_pakistan_eq.csv', header=0)
 # Retrieving all tweet ids in order to use APIs to fetch all the informations we need on them
 
 tweet_ids = dataset["tweet_id"]
+categories = dataset["choose_one_category"]
 
 # tweet_ids will be a Pandas.Series object
 print(type(tweet_ids))
@@ -50,7 +51,7 @@ correctly_extracted = 0
 not_available = 0
 first_tweet_time = dt.datetime.max
 
-for id in tweet_ids:
+for id, category in zip(tweet_ids, categories):
     while True:
         try:
             tweet = twitter.show_status(id=id)
@@ -59,7 +60,7 @@ for id in tweet_ids:
                                "Followed": tweet['user']['friends_count'], "TwitterAge": user_age(tweet['user']['created_at']),
                                "TotalTweets": tweet['user']['statuses_count'], "Verified": tweet['user']['verified'],
                                "Geotagged": is_geotagged(tweet), "nHashtags": len(tweet['entities']['hashtags']), "nURLs": len(tweet['entities']['urls']),
-                               "nMentions": len(tweet['entities']['user_mentions']), "CreationTime": tweet['created_at']})
+                               "nMentions": len(tweet['entities']['user_mentions']), "CreationTime": tweet['created_at'], "Label": category})
             correctly_extracted = correctly_extracted + 1
             print("[DEBUG] Found info for tweet: ", id, ". Added to list.")
 
@@ -109,4 +110,4 @@ meta_tweets = meta_tweets.set_index('TweetID')
 col_names = list(meta_tweets.columns.values)
 
 # Save as CSV, including header containing columns
-meta_tweets.to_csv(r'metatweets3.csv', header=col_names, index=True, sep=',', mode='w')
+meta_tweets.to_csv(r'metatweets5.csv', header=col_names, index=True, sep=',', mode='w')
