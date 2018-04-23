@@ -4,9 +4,11 @@ import pandas as pd
 import json
 import numpy as np
 import time
+import datetime as dt
 
 from user_age import user_age
 from is_geotagged import is_geotagged
+from str_to_datetime import str_to_datetime
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -47,44 +49,50 @@ list_infos = []             # List that will contain the new informations
 correctly_extracted = 0
 not_available = 0
 for id in tweet_ids:
-    try:
-        tweet = twitter.show_status(id=id)
-        list_infos.append({"Username": tweet['user']['name'],
-                           "TweetID": id, "Followers": tweet['user']['followers_count'],
-                           "Followed": tweet['user']['friends_count'], "TwitterAge": user_age(tweet['user']['created_at']),
-                           "TotalTweets": tweet['user']['statuses_count'], "Verified": tweet['user']['verified'],
-                           "Geotagged": is_geotagged(tweet), "nHashtags": len(tweet['entities']['hashtags']), "nURLs": len(tweet['entities']['urls']),
-                           "nMentions": len(tweet['entities']['user_mentions'])})
-        correctly_extracted = correctly_extracted + 1
-        print("[DEBUG] Found info for tweet: ", id, ". Added to list.")
-    except twython.exceptions.TwythonRateLimitError as e:
-        # If we reach the limit of downloadable tweets in a time window, we wait 5 minutes and try again
-        print(e)
-        print("[DEBUG] Maximum number of tweets reached. Trying again in 5 mins...")
-        print("[DEBUG]", correctly_extracted, "tweets have been correctly extracted")
-        print("[DEBUG]", not_available,
-              "tweets have encountered problems during download (403, 404, ...)")
-        for i in range(300):
-            if i == 299:
-                print("[DEBUG]", 300-i, "second left...", flush=True)
-            else:
-                print("[DEBUG]", 300-i, "seconds left...", flush=True)
-            time.sleep(1)
-        # break
-    except twython.exceptions.TwythonError as e:
-        # If other exceptions occurs (APIs return an unexpected HTTP response code) we print it
-        # This box includes error like 404 - Not found, 403 - User suspended etc.
-        print("[DEBUG]", e)
-        not_available = not_available + 1
-'''
-        list_infos.append({"Username": None, "ID": id, "Followers": None,
-                           "Followed": None, "TwitterAge": None, "TotalTweets": None, "Verified": None,
-                           "Geotagged": None, "nHashtags": None, "nURLs": None, "nMentions": None})
-'''
+    while True:
+        try:
+            tweet = twitter.show_status(id=id)
+            list_infos.append({"Username": tweet['user']['name'],
+                               "TweetID": id, "Followers": tweet['user']['followers_count'],
+                               "Followed": tweet['user']['friends_count'], "TwitterAge": user_age(tweet['user']['created_at']),
+                               "TotalTweets": tweet['user']['statuses_count'], "Verified": tweet['user']['verified'],
+                               "Geotagged": is_geotagged(tweet), "nHashtags": len(tweet['entities']['hashtags']), "nURLs": len(tweet['entities']['urls']),
+                               "nMentions": len(tweet['entities']['user_mentions']), "CreationTime": tweet['created_at']})
+            correctly_extracted = correctly_extracted + 1
+            print("[DEBUG] Found info for tweet: ", id, ". Added to list.")
+            break
+        except twython.exceptions.TwythonRateLimitError as e:
+            # If we reach the limit of downloadable tweets in a time window, we wait 5 minutes and try again
+            print(e)
+            print("[DEBUG] Maximum number of tweets reached. Trying again in 5 mins...")
+            print("[DEBUG]", correctly_extracted, "tweets have been correctly extracted")
+            print("[DEBUG]", not_available,
+                  "tweets have encountered problems during download (403, 404, ...)")
+            for i in range(300):
+                if i == 299:
+                    print("[DEBUG]", 300-i, "second left...")
+                else:
+                    print("[DEBUG]", 300-i, "seconds left...")
+                time.sleep(1)
+            # break
+        except twython.exceptions.TwythonError as e:
+            # If other exceptions occurs (APIs return an unexpected HTTP response code) we print it
+            # This box includes error like 404 - Not found, 403 - User suspended etc.
+            print("[DEBUG]", e)
+            not_available = not_available + 1
+            break
+now = dt.datetime.now()
+
+print("[DEBUG] calculating age of the tweet")
+for item in list_infos:
+    creation_time = str_to_datetime(item["CreationTime"])
+    delta_time = now - creation_time
+    item["DeltaTime"] = str(delta_time)
 
 print("[DEBUG]", correctly_extracted, "tweets have been correctly extracted")
 print("[DEBUG]", not_available,
       "tweets have encountered problems during download (403, 404, ...)")
+
 
 # Save tweets and their metadata into a new Dataframe
 meta_tweets = pd.DataFrame(list_infos)
@@ -96,4 +104,4 @@ meta_tweets = meta_tweets.set_index('TweetID')
 col_names = list(meta_tweets.columns.values)
 
 # Save as CSV, including header containing columns
-meta_tweets.to_csv(r'metatweets.csv', header=col_names, index=True, sep=',', mode='w')
+meta_tweets.to_csv(r'metatweets2.csv', header=col_names, index=True, sep=',', mode='w')
