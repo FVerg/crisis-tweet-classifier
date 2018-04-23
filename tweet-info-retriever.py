@@ -48,6 +48,8 @@ list_infos = []             # List that will contain the new informations
 # Access to the informations of each tweet, retrieving them through Tweet ID
 correctly_extracted = 0
 not_available = 0
+first_tweet_time = dt.datetime.max
+
 for id in tweet_ids:
     while True:
         try:
@@ -60,6 +62,9 @@ for id in tweet_ids:
                                "nMentions": len(tweet['entities']['user_mentions']), "CreationTime": tweet['created_at']})
             correctly_extracted = correctly_extracted + 1
             print("[DEBUG] Found info for tweet: ", id, ". Added to list.")
+
+            if str_to_datetime(tweet['created_at']) < first_tweet_time:
+                first_tweet_time = str_to_datetime(tweet['created_at'])
             break
         except twython.exceptions.TwythonRateLimitError as e:
             # If we reach the limit of downloadable tweets in a time window, we wait 5 minutes and try again
@@ -83,10 +88,10 @@ for id in tweet_ids:
             break
 now = dt.datetime.now()
 
-print("[DEBUG] calculating age of the tweet")
+print("[DEBUG] calculating elapsed time since first tweet of the crisis")
 for item in list_infos:
     creation_time = str_to_datetime(item["CreationTime"])
-    delta_time = now - creation_time
+    delta_time = creation_time - first_tweet_time
     item["DeltaTime"] = str(delta_time)
 
 print("[DEBUG]", correctly_extracted, "tweets have been correctly extracted")
@@ -104,4 +109,4 @@ meta_tweets = meta_tweets.set_index('TweetID')
 col_names = list(meta_tweets.columns.values)
 
 # Save as CSV, including header containing columns
-meta_tweets.to_csv(r'metatweets2.csv', header=col_names, index=True, sep=',', mode='w')
+meta_tweets.to_csv(r'metatweets3.csv', header=col_names, index=True, sep=',', mode='w')
