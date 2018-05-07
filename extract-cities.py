@@ -8,6 +8,7 @@
 # easily execute the server. (It has to be placed in corenlp-full-... folder)
 
 from nltk.tag.stanford import CoreNLPNERTagger
+from tweets_to_csv import tweets_to_csv
 import pandas as pd
 
 dataset = pd.read_csv('C:/dataset/2013_pakistan_eq.csv', header=0)
@@ -45,5 +46,7 @@ tweet["Location"] = list(set(tweet["Location"]))
 tweet["StateProvince"] = list(set(tweet["StateProvince"]))
 tweet["Country"] = list(set(tweet["Country"]))
 tweet["City"] = list(set(tweet["City"]))
+
+tweets_to_csv(tweets, "cities.csv")
 
 print(tweets)
