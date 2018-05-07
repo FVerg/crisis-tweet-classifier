@@ -4,6 +4,8 @@
 # check the dependencies (CLASSPATH and STANFORD_MODELS) and execute this command on cmd:
 # java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 15000
 # The above command has to be executed after having put yourself inside the corenlp-full-... folder
+# A batch file (runServer.bat) for Windows is included in the repository, to
+# easily execute the server. (It has to be placed in corenlp-full-... folder)
 
 from nltk.tag.stanford import CoreNLPNERTagger
 import pandas as pd
