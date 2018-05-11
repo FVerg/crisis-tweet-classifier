@@ -87,6 +87,7 @@ for id, category in zip(tweet_ids, categories):
             print("[DEBUG]", e)
             not_available = not_available + 1
             break
+
 now = dt.datetime.now()
 
 print("[DEBUG] calculating elapsed time since first tweet of the crisis")
