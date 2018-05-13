@@ -17,4 +17,4 @@ print(dataset)
 
 dataset.set_index('TweetID')
 col_names = list(dataset.columns.values)
-dataset.to_csv(r'metatweets7.csv', header=col_names, index=False, sep=',', mode='w')
+dataset.to_csv(r'metatweets8.csv', header=col_names, index=False, sep=',', mode='w')

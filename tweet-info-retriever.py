@@ -59,7 +59,7 @@ for id, category in zip(tweet_ids, categories):
                                "TweetID": id, "Followers": tweet['user']['followers_count'],
                                "Followed": tweet['user']['friends_count'], "TwitterAge": user_age(tweet['user']['created_at']),
                                "TotalTweets": tweet['user']['statuses_count'], "Verified": tweet['user']['verified'],
-                               "Geotagged": is_geotagged(tweet), "nHashtags": len(tweet['entities']['hashtags']), "nURLs": len(tweet['entities']['urls']),
+                               "Geotagged": tweet['user']['geo_enabled'], "nHashtags": len(tweet['entities']['hashtags']), "nURLs": len(tweet['entities']['urls']),
                                "nMentions": len(tweet['entities']['user_mentions']), "CreationTime": tweet['created_at'], "Label": category})
             correctly_extracted = correctly_extracted + 1
             print("[DEBUG] Found info for tweet: ", id, ". Added to list.")
@@ -111,4 +111,4 @@ meta_tweets = meta_tweets.set_index('TweetID')
 col_names = list(meta_tweets.columns.values)
 
 # Save as CSV, including header containing columns
-meta_tweets.to_csv(r'metatweets6.csv', header=col_names, index=True, sep=',', mode='w')
+meta_tweets.to_csv(r'metatweets9.csv', header=col_names, index=True, sep=',', mode='w')

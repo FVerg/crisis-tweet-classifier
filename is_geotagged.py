@@ -6,7 +6,7 @@
 
 
 def is_geotagged(tweet):
-    if tweet.__contains__('place'):
+    if tweet['place']:
         return True
     else:
         return False
