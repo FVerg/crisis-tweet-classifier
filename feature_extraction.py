@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
+from sklearn import tree
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
-
+import graphviz
 
 dataset = pd.read_csv('C:/dataset/2014_california_eq_metadata.csv', header=0)
 
@@ -52,5 +53,11 @@ ds_array = ds_array.astype(int)
 chi2_selector = SelectKBest(chi2, k=4)
 kbest = chi2_selector.fit_transform(ds_array, ds_target)
 
-print(kbest)
+clf = tree.DecisionTreeClassifier()
+clf = clf.fit(ds_array, ds_target)
+
+dot_data = tree.export_graphviz(clf, out_file=None)
+graph = graphviz.Source(dot_data)
+graph.render("DT")
+
 # print(dataset.index)
