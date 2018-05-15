@@ -1,6 +1,6 @@
 import pandas as pd
 
-dataset = pd.read_csv('C:/dataset/2014_california_eq_metadata.csv', header=0)
+dataset = pd.read_csv('C:/dataset/2013_pakistan_eq_metadata.csv', header=0)
 
 deltatimes = dataset["DeltaTime"]
 DeltaSec = []
@@ -17,4 +17,4 @@ print(dataset)
 
 dataset.set_index('TweetID')
 col_names = list(dataset.columns.values)
-dataset.to_csv(r'metatweets8.csv', header=col_names, index=False, sep=',', mode='w')
+dataset.to_csv(r'metatweets.csv', header=col_names, index=False, sep=',', mode='w')

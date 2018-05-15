@@ -21,7 +21,7 @@ OAUTH_TOKEN_SECRET = keys['access_token_secret']   # Type your OAUTH_TOKEN_SECRE
 
 twitter = Twython(CONSUMER_KEY, CONSUMER_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
 
-dataset = pd.read_csv('C:/dataset/2014_california_eq.csv', header=0)
+dataset = pd.read_csv('C:/dataset/2013_pakistan_eq.csv', header=0)
 
 # Retrieving all tweet ids in order to use APIs to fetch all the informations we need on them
 
@@ -111,4 +111,4 @@ meta_tweets = meta_tweets.set_index('TweetID')
 col_names = list(meta_tweets.columns.values)
 
 # Save as CSV, including header containing columns
-meta_tweets.to_csv(r'metatweets9.csv', header=col_names, index=True, sep=',', mode='w')
+meta_tweets.to_csv(r'metatweets_pakistan.csv', header=col_names, index=True, sep=',', mode='w')

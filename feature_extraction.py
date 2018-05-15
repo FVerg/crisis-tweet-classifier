@@ -54,7 +54,7 @@ chi2_selector = SelectKBest(chi2, k=4)
 kbest = chi2_selector.fit_transform(ds_array, ds_target)
 
 clf = tree.DecisionTreeClassifier()
-clf = clf.fit(ds_array, ds_target)
+clf = clf.fit(kbest, ds_target)
 
 dot_data = tree.export_graphviz(clf, out_file=None)
 graph = graphviz.Source(dot_data)
