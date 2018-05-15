@@ -1,5 +1,7 @@
 keys.json
 *.pyproj
 *.sln
+*.csv
+*.xlsx
 .vs
 __pycache__
