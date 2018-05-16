@@ -10,7 +10,7 @@
 import pandas as pd
 
 # Specify name and path of the output file:
-outputFilePath = r"C:\dataset\2014_california_eq_location_tf.csv"
+outputFilePath = r"C:\dataset\2013_pakistan_eq_location_tf.csv"
 
 
 def has_location_infos(inputFilePath):
@@ -64,3 +64,6 @@ def remove_sq_brackets(x):
     x = x.replace("[", "")
     x = x.replace("]", "")
     return x
+
+
+# has_location_infos(r"C:\dataset\2013_pakistan_eq_cities.csv")
