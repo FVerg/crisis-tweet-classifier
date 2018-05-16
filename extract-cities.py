@@ -19,7 +19,7 @@ tweet_ids = dataset["tweet_id"]
 tweet_text = dataset["tweet_text"]
 
 
-for id, text in zip(tweet_ids, tweet_text):
+for id, text, lab in zip(tweet_ids, tweet_text, tweet_labels):
     filtered_text = ""
     for word in text:
         if word.startswith("#"):
@@ -55,6 +55,6 @@ for tweet in tweets:
     tweet["Country"] = list(set(tweet["Country"]))
     tweet["City"] = list(set(tweet["City"]))
 
-tweets_to_csv(tweets, "cities3.csv")
+tweets_to_csv(tweets, "cities4.csv")
 
 # print(tweets)
