@@ -1,3 +1,9 @@
+# This script transforms all the attribute values in the dataset passed as parameter
+# of read_csv function in binary features (Values = [0,1]).
+# At the end of the script there are some commented lines, which were previously
+# used to train a Decision Tree using sklearn.
+
+
 import pandas as pd
 import numpy as np
 from sklearn import tree
@@ -21,7 +27,7 @@ for ID in dataset.index:
         dataset.loc[ID, "Geotagged"] = 0
 
 # Mapping boolean values of Class Label column in 0,1
-
+'''
 for ID in dataset.index:
     if dataset.loc[ID, "Label"] in ("caution_and_advice", "displaced_people_and_evacuations",
                                     "infrastructure_and_utilities_damage", "injured_or_dead_people",
@@ -29,7 +35,7 @@ for ID in dataset.index:
         dataset.loc[ID, "Label"] = 1
     else:
         dataset.loc[ID, "Label"] = 0
-
+'''
 # Mapping boolean values of Verified column in 0,1
 
 for ID in dataset.index:
@@ -40,10 +46,13 @@ for ID in dataset.index:
 
 
 del dataset["CreationTime"], dataset["Username"]
+col_names = list(dataset.columns.values)
+dataset.to_csv("C:/dataset/2014_california_eq_metadata_bin.csv",
+               header=col_names, index=True, sep=',', mode='w')
 # print(dataset)
 
 # Making everything up for sklearn usage
-
+'''
 ds_array = dataset.values
 ds_target = dataset["Label"].values
 
@@ -61,3 +70,4 @@ graph = graphviz.Source(dot_data)
 graph.render("DT")
 
 # print(dataset.index)
+'''
