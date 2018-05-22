@@ -8,7 +8,7 @@
 # easily execute the server. (It has to be placed in corenlp-full-... folder)
 
 from nltk.tag.stanford import CoreNLPNERTagger
-from tweets_to_csv import tweets_to_csv
+from utilities import tweets_to_csv
 import pandas as pd
 
 dataset = pd.read_csv('C:/dataset/2014_california_eq.csv', header=0)
@@ -19,7 +19,7 @@ tweet_ids = dataset["tweet_id"]
 tweet_text = dataset["tweet_text"]
 
 
-for id, text, lab in zip(tweet_ids, tweet_text, tweet_labels):
+for id, text in zip(tweet_ids, tweet_text):
     filtered_text = ""
     for word in text:
         if word.startswith("#"):

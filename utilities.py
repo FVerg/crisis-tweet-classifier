@@ -10,3 +10,17 @@ def tweets_to_csv(list_tweets, filename):
     df = df.set_index("TweetID")
     col_names = list(df.columns.values)
     df.to_csv(filename, header=col_names, index=True, sep=',', mode='w')
+
+
+# Input:
+# - input_file: File containing a tag for each line
+# Output:
+# - List containing tags stored in the input file
+def get_tagset(input_file):
+    tagset = []
+    tagset_file = open(input_file, 'r')
+    for line in tagset_file:
+        tagset.append(line.replace("\n", "").strip())
+
+    return tagset
+# print(tagset)
